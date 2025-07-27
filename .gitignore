@@ -30,3 +30,13 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+*.exe
+*.zip
+*.txt
+
+# La carpeta de downloads y todo su contenido
+downloads/**
+
+
+
