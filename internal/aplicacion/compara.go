@@ -3,6 +3,7 @@ package aplicacion
 import (
 	"fmt"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/jvillablanca/rolecheck/internal/aplicacion/dominio"
@@ -14,8 +15,20 @@ func ComparaCuentas() {
 	c := cfg.Crea.GetCfg()
 	p := creator.Crea
 
+	// Banner de inicio
+	fmt.Println("========================================")
+	fmt.Println("Comparando cuentas de Oracle Fusion ERP")
+	fmt.Println("========================================")
+	fmt.Println("Ejecutando job para obtener roles, permisos y data access...")
+	fmt.Println("----------------------------------------")
 	accesos1 := p.GetRecuperaAccessos().GetAccessos(c.GetCuenta1())
+	fmt.Println("----------------------------------------")
+	fmt.Println("Ejecutando job para obtener roles, permisos y data access...")
+	fmt.Println("----------------------------------------")
 	accesos2 := p.GetRecuperaAccessos().GetAccessos(c.GetCuenta2())
+	fmt.Println("----------------------------------------")
+	fmt.Println("Comparando roles, permisos y data access entre las cuentas...")
+	fmt.Println("Generando reporte...")
 
 	now := time.Now()
 	filename := fmt.Sprintf("comparacion_%s.txt", now.Format("20060102T1504"))
@@ -92,16 +105,52 @@ func ComparaCuentas() {
 		perm2[k] = p
 	}
 	fmt.Fprintf(f, "Permisos en Cuenta 1 (%s) y no en Cuenta 2 (%s):\n", c.GetCuenta1().NombreAmbiente, c.GetCuenta2().NombreAmbiente)
-	for k, p := range perm1 {
+	// Extraer y ordenar claves
+	var perm1Keys []PermisoKey
+	for k := range perm1 {
 		if _, ok := perm2[k]; !ok {
-			fmt.Fprintf(f, "- %+v\n", p)
+			perm1Keys = append(perm1Keys, k)
 		}
 	}
-	fmt.Fprintf(f, "\nPermisos en Cuenta 2 (%s) y no en Cuenta 1 (%s):\n", c.GetCuenta2().NombreAmbiente, c.GetCuenta1().NombreAmbiente)
-	for k, p := range perm2 {
-		if _, ok := perm1[k]; !ok {
-			fmt.Fprintf(f, "- %+v\n", p)
+	sort.Slice(perm1Keys, func(i, j int) bool {
+		a, b := perm1Keys[i], perm1Keys[j]
+		if a.Rol != b.Rol {
+			return a.Rol < b.Rol
 		}
+		if a.RolHeredado != b.RolHeredado {
+			return a.RolHeredado < b.RolHeredado
+		}
+		if a.Aplicacion != b.Aplicacion {
+			return a.Aplicacion < b.Aplicacion
+		}
+		return a.Permiso < b.Permiso
+	})
+	for _, k := range perm1Keys {
+		fmt.Fprintf(f, "- %+v\n", perm1[k])
+	}
+
+	fmt.Fprintf(f, "\nPermisos en Cuenta 2 (%s) y no en Cuenta 1 (%s):\n", c.GetCuenta2().NombreAmbiente, c.GetCuenta1().NombreAmbiente)
+	var perm2Keys []PermisoKey
+	for k := range perm2 {
+		if _, ok := perm1[k]; !ok {
+			perm2Keys = append(perm2Keys, k)
+		}
+	}
+	sort.Slice(perm2Keys, func(i, j int) bool {
+		a, b := perm2Keys[i], perm2Keys[j]
+		if a.Rol != b.Rol {
+			return a.Rol < b.Rol
+		}
+		if a.RolHeredado != b.RolHeredado {
+			return a.RolHeredado < b.RolHeredado
+		}
+		if a.Aplicacion != b.Aplicacion {
+			return a.Aplicacion < b.Aplicacion
+		}
+		return a.Permiso < b.Permiso
+	})
+	for _, k := range perm2Keys {
+		fmt.Fprintf(f, "- %+v\n", perm2[k])
 	}
 	fmt.Fprintf(f, "\n")
 
@@ -129,16 +178,52 @@ func ComparaCuentas() {
 		data2[k] = d
 	}
 	fmt.Fprintf(f, "Data Access en Cuenta 1 (%s) y no en Cuenta 2 (%s):\n", c.GetCuenta1().NombreAmbiente, c.GetCuenta2().NombreAmbiente)
-	for k, d := range data1 {
+	// Extraer y ordenar claves
+	var data1Keys []DataKey
+	for k := range data1 {
 		if _, ok := data2[k]; !ok {
-			fmt.Fprintf(f, "- %+v\n", d)
+			data1Keys = append(data1Keys, k)
 		}
 	}
-	fmt.Fprintf(f, "\nData Access en Cuenta 2 (%s) y no en Cuenta 1 (%s):\n", c.GetCuenta2().NombreAmbiente, c.GetCuenta1().NombreAmbiente)
-	for k, d := range data2 {
-		if _, ok := data1[k]; !ok {
-			fmt.Fprintf(f, "- %+v\n", d)
+	sort.Slice(data1Keys, func(i, j int) bool {
+		a, b := data1Keys[i], data1Keys[j]
+		if a.Rol != b.Rol {
+			return a.Rol < b.Rol
 		}
+		if a.RolHeredado != b.RolHeredado {
+			return a.RolHeredado < b.RolHeredado
+		}
+		if a.Aplicacion != b.Aplicacion {
+			return a.Aplicacion < b.Aplicacion
+		}
+		return a.Objeto < b.Objeto
+	})
+	for _, k := range data1Keys {
+		fmt.Fprintf(f, "- %+v\n", data1[k])
+	}
+
+	fmt.Fprintf(f, "\nData Access en Cuenta 2 (%s) y no en Cuenta 1 (%s):\n", c.GetCuenta2().NombreAmbiente, c.GetCuenta1().NombreAmbiente)
+	var data2Keys []DataKey
+	for k := range data2 {
+		if _, ok := data1[k]; !ok {
+			data2Keys = append(data2Keys, k)
+		}
+	}
+	sort.Slice(data2Keys, func(i, j int) bool {
+		a, b := data2Keys[i], data2Keys[j]
+		if a.Rol != b.Rol {
+			return a.Rol < b.Rol
+		}
+		if a.RolHeredado != b.RolHeredado {
+			return a.RolHeredado < b.RolHeredado
+		}
+		if a.Aplicacion != b.Aplicacion {
+			return a.Aplicacion < b.Aplicacion
+		}
+		return a.Objeto < b.Objeto
+	})
+	for _, k := range data2Keys {
+		fmt.Fprintf(f, "- %+v\n", data2[k])
 	}
 	fmt.Fprintf(f, "\n")
 }

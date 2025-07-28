@@ -17,15 +17,6 @@ type Creator struct {
 }
 
 func (c *Creator) IniCfg(username1, host1, username2, host2, userAdmin, passAdmin, nombreAmbiente1, nombreAmbiente2 string) id.Cfg {
-	println("Inicializando configuración con los siguientes parámetros:")
-	println("username1:", username1)
-	println("host1:", host1)
-	println("username2:", username2)
-	println("host2:", host2)
-	println("userAdmin:", userAdmin)
-	println("passAdmin:", passAdmin)
-	println("nombreAmbiente1:", nombreAmbiente1)
-	println("nombreAmbiente2:", nombreAmbiente2)
 	cfg = ad.NewCfg(username1, host1, username2, host2, userAdmin, passAdmin, nombreAmbiente1, nombreAmbiente2)
 	return cfg
 }

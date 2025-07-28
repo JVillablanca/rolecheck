@@ -90,7 +90,6 @@ func (a *Accessos) downloadFile(cuenta dominio.Cuenta, jobId string, userAdmin s
 		log.Fatalf("Error escribiendo %s: %v", outFile, err)
 		return "", err
 	}
-	log.Printf("✅ Archivo guardado como %s (%d bytes)", outFile, len(bodyBytes))
 
 	return fullOutDir, nil
 }

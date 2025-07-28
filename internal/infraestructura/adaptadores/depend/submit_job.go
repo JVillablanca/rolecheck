@@ -91,8 +91,5 @@ xmlns:typ="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/er
 		log.Fatalf("Error parseando XML: %v", err)
 	}
 
-	//debug
-	fmt.Printf("Respuesta del job: %s\n", envelopeResponse.Body.SubmitESSJobRequestResponse.Result)
-
 	return envelopeResponse.Body.SubmitESSJobRequestResponse.Result
 }

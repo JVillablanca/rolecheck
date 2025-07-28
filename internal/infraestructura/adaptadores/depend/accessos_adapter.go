@@ -20,9 +20,7 @@ func (a *Accessos) GetAccessos(cuenta dominio.Cuenta) dominio.Accessos {
 	if jobId == "" {
 		panic("No se pudo obtener el jobId en el ambiente " + cuenta.NombreAmbiente)
 	}
-
-	// Se espera a que el job termine
-	println("Esperando a que el job termine...", jobId)
+	// Se espera a que el job se complete
 	status, err := a.waitForJobCompletion(cuenta, jobId, cfg.GetUserAdmin(), cfg.GetPassAdmin())
 	if err != nil {
 		panic("Error esperando la finalización del job " + jobId + ": " + err.Error())
