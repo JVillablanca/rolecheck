@@ -52,9 +52,10 @@ func validateUserHostArgs() {
 
 func initRootCmd() {
 	rootCmd = &cobra.Command{
-		Use:   "rolecheck",
-		Short: "rolecheck CLI",
-		Long:  "rolecheck es una herramienta para comparar roles y permisos en Oracle Fusion ERP.",
+		Use:     "rolecheck",
+		Short:   "rolecheck CLI",
+		Long:    "rolecheck es una herramienta para comparar roles, permisos y acceso a datos en Oracle Fusion ERP.\n\nAutor: Juan Villablanca",
+		Version: "v0.0.1",
 		Run: func(cmd *cobra.Command, args []string) {
 
 			validateUserHostArgs()
