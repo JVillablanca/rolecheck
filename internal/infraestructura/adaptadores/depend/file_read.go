@@ -120,6 +120,11 @@ func (a *Accessos) leePermisos(downloadDir string) ([]dominio.Permiso, error) {
 			Aplicacion:  record[idxAplicacion],
 			Permiso:     record[idxPermiso],
 		}
+
+		// Ignorar Permiso = "NO DATA AVAILABLE"
+		if perm.Permiso == "NO DATA AVAILABLE" {
+			continue
+		}
 		permisos = append(permisos, perm)
 	}
 
@@ -215,6 +220,11 @@ func (a *Accessos) leeDataAccess(downloadDir string) ([]dominio.DataAccess, erro
 			RolHeredado: record[idxRolHeredado],
 			Aplicacion:  record[idxAplicacion],
 			Objeto:      record[idxObjeto],
+		}
+
+		// Ignorar Data Access con "NO DATA AVAILABLE"
+		if data.Objeto == "NO DATA AVAILABLE" {
+			continue
 		}
 		dataAccess = append(dataAccess, data)
 	}
